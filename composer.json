@@ -3,7 +3,6 @@
     "alias": "数据字典",
     "description": "SlowAdmin 数据字典扩展",
     "type": "library",
-    "version": "1.0.0",
     "keywords": [
         "slow-admin",
         "extension",
