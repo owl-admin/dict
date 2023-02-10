@@ -1,6 +1,6 @@
 <?php
 
-if (function_exists('admin_dict')) {
+if (!function_exists('admin_dict')) {
     /**
      * 数据字典
      *
