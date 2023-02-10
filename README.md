@@ -8,7 +8,7 @@
 
 #### zip 下载地址
 
-[https://gitee.com/slowlyo/slow-dict/repository/archive/master.zip](https://gitee.com/slowlyo/slow-notice/repository/archive/master.zip)
+[https://gitee.com/slowlyo/slow-dict/repository/archive/master.zip](https://gitee.com/slowlyo/slow-dict/repository/archive/master.zip)
 
 #### composer
 
