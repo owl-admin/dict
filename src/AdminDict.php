@@ -1,9 +1,9 @@
 <?php
 
-namespace Slowlyo\SlowDict;
+namespace Slowlyo\OwlDict;
 
 use Illuminate\Support\Arr;
-use Slowlyo\SlowDict\Services\AdminDictService as Service;
+use Slowlyo\OwlDict\Services\AdminDictService as Service;
 
 class AdminDict
 {

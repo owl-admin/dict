@@ -1,13 +1,13 @@
 <?php
 
-namespace Slowlyo\SlowDict\Services;
+namespace Slowlyo\OwlDict\Services;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
-use Slowlyo\SlowDict\SlowDictServiceProvider;
-use Slowlyo\SlowDict\Models\AdminDict as Model;
-use Slowlyo\SlowAdmin\Services\AdminService;
+use Slowlyo\OwlDict\OwlDictServiceProvider;
+use Slowlyo\OwlDict\Models\AdminDict as Model;
+use Slowlyo\OwlAdmin\Services\AdminService;
 
 /**
  * @method Model|Builder query()
@@ -167,6 +167,6 @@ class AdminDictService extends AdminService
 
     private function trans($key, $replace = [])
     {
-        return SlowDictServiceProvider::trans('admin-dict.' . $key, $replace);
+        return OwlDictServiceProvider::trans('admin-dict.' . $key, $replace);
     }
 }

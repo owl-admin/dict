@@ -1,4 +1,4 @@
-## SlowAdmin 数据字典
+## OwlAdmin 数据字典
 
 ## 效果
 
@@ -8,12 +8,12 @@
 
 #### zip 下载地址
 
-[https://gitee.com/slowlyo/slow-dict/repository/archive/master.zip](https://gitee.com/slowlyo/slow-dict/repository/archive/master.zip)
+[https://gitee.com/slowlyo/owl-dict/repository/archive/master.zip](https://gitee.com/slowlyo/owl-dict/repository/archive/master.zip)
 
 #### composer
 
 ```bash
-composer require slowlyo/slow-dict
+composer require slowlyo/owl-dict
 ```
 
 ## 使用说明

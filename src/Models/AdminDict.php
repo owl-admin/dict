@@ -1,9 +1,9 @@
 <?php
 
-namespace Slowlyo\SlowDict\Models;
+namespace Slowlyo\OwlDict\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Slowlyo\SlowAdmin\Models\BaseModel as Model;
+use Slowlyo\OwlAdmin\Models\BaseModel as Model;
 
 class AdminDict extends Model
 {

@@ -1,14 +1,14 @@
 {
-    "name": "slowlyo/slow-dict",
+    "name": "slowlyo/owl-dict",
     "alias": "数据字典",
-    "description": "SlowAdmin 数据字典扩展",
+    "description": "OwlAdmin 数据字典扩展",
     "type": "library",
     "keywords": [
-        "slow-admin",
+        "owl-admin",
         "extension",
         "dict"
     ],
-    "homepage": "https://gitee.com/slowlyo/slow-dict",
+    "homepage": "https://gitee.com/slowlyo/owl-dict",
     "license": "MIT",
     "authors": [
         {
@@ -18,21 +18,21 @@
     ],
     "require": {
         "php": ">=8.0",
-        "slowlyo/slow-admin": "*"
+        "slowlyo/owl-admin": "*"
     },
     "autoload": {
         "psr-4": {
-            "Slowlyo\\SlowDict\\": "src/"
+            "Slowlyo\\OwlDict\\": "src/"
         },
         "files": [
             "src/helpers.php"
         ]
     },
     "extra": {
-        "slow-admin": "Slowlyo\\SlowDict\\SlowDictServiceProvider",
+        "owl-admin": "Slowlyo\\OwlDict\\OwlDictServiceProvider",
         "laravel": {
             "providers": [
-                "Slowlyo\\SlowDict\\SlowDictServiceProvider"
+                "Slowlyo\\OwlDict\\OwlDictServiceProvider"
             ]
         }
     }

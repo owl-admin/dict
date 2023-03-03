@@ -1,7 +1,7 @@
 <?php
 
-use Slowlyo\SlowDict\Http\Controllers;
+use Slowlyo\OwlDict\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/admin_dict/dict_type_options', [Controllers\SlowDictController::class, 'dictTypeOptions']);
-Route::resource('/admin_dict', Controllers\SlowDictController::class);
+Route::get('/admin_dict/dict_type_options', [Controllers\OwlDictController::class, 'dictTypeOptions']);
+Route::resource('/admin_dict', Controllers\OwlDictController::class);

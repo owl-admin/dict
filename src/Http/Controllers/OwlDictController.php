@@ -1,24 +1,24 @@
 <?php
 
-namespace Slowlyo\SlowDict\Http\Controllers;
+namespace Slowlyo\OwlDict\Http\Controllers;
 
-use Slowlyo\SlowAdmin\Renderers\Dialog;
-use Slowlyo\SlowAdmin\Renderers\CRUDTable;
-use Slowlyo\SlowAdmin\Renderers\Operation;
-use Slowlyo\SlowAdmin\Renderers\TableColumn;
-use Slowlyo\SlowAdmin\Renderers\TextControl;
-use Slowlyo\SlowDict\SlowDictServiceProvider;
-use Slowlyo\SlowAdmin\Renderers\DialogAction;
-use Slowlyo\SlowAdmin\Renderers\SwitchControl;
-use Slowlyo\SlowAdmin\Renderers\NumberControl;
-use Slowlyo\SlowAdmin\Renderers\SelectControl;
-use Slowlyo\SlowDict\Services\AdminDictService;
-use Slowlyo\SlowAdmin\Controllers\AdminController;
+use Slowlyo\OwlAdmin\Renderers\Dialog;
+use Slowlyo\OwlAdmin\Renderers\CRUDTable;
+use Slowlyo\OwlAdmin\Renderers\Operation;
+use Slowlyo\OwlAdmin\Renderers\TableColumn;
+use Slowlyo\OwlAdmin\Renderers\TextControl;
+use Slowlyo\OwlDict\OwlDictServiceProvider;
+use Slowlyo\OwlAdmin\Renderers\DialogAction;
+use Slowlyo\OwlAdmin\Renderers\SwitchControl;
+use Slowlyo\OwlAdmin\Renderers\NumberControl;
+use Slowlyo\OwlAdmin\Renderers\SelectControl;
+use Slowlyo\OwlDict\Services\AdminDictService;
+use Slowlyo\OwlAdmin\Controllers\AdminController;
 
 /**
- * @property \Slowlyo\SlowAdmin\Services\AdminService|AdminDictService $service
+ * @property \Slowlyo\OwlAdmin\Services\AdminService|AdminDictService $service
  */
-class SlowDictController extends AdminController
+class OwlDictController extends AdminController
 {
     protected string $serviceName = AdminDictService::class;
 
@@ -46,7 +46,7 @@ class SlowDictController extends AdminController
     }
 
     /**
-     * @return \Slowlyo\SlowAdmin\Renderers\Page
+     * @return \Slowlyo\OwlAdmin\Renderers\Page
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -54,7 +54,7 @@ class SlowDictController extends AdminController
     {
         $createButton = $this->createButton(true);
 
-        if (SlowDictServiceProvider::setting('disabled_dict_create')) {
+        if (OwlDictServiceProvider::setting('disabled_dict_create')) {
             $createButton = '';
         }
 
@@ -63,7 +63,7 @@ class SlowDictController extends AdminController
             $this->rowDeleteButton(),
         ])->set('width', 240);
 
-        if (SlowDictServiceProvider::setting('disabled_dict_delete')) {
+        if (OwlDictServiceProvider::setting('disabled_dict_delete')) {
             $rowAction = Operation::make()->label(__('admin.actions'))->buttons([
                 $this->rowEditButton(true),
             ])->set('width', 120);
@@ -71,7 +71,7 @@ class SlowDictController extends AdminController
 
         $dictTypeButton = $this->dictForm();
 
-        if (SlowDictServiceProvider::setting('disabled_dict_type')) {
+        if (OwlDictServiceProvider::setting('disabled_dict_type')) {
             $dictTypeButton = '';
         }
 
@@ -240,6 +240,6 @@ class SlowDictController extends AdminController
 
     private function trans($key)
     {
-        return SlowDictServiceProvider::trans('admin-dict.' . $key);
+        return OwlDictServiceProvider::trans('admin-dict.' . $key);
     }
 }

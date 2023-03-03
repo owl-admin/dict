@@ -4,7 +4,7 @@ if (!function_exists('admin_dict')) {
     /**
      * 数据字典
      *
-     * @return \Slowlyo\SlowDict\AdminDict
+     * @return \Slowlyo\OwlDict\AdminDict
      */
     function admin_dict()
     {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Slowlyo\SlowDict;
+namespace Slowlyo\OwlDict;
 
-use Slowlyo\SlowAdmin\Extend\ServiceProvider;
-use Slowlyo\SlowAdmin\Renderers\SwitchControl;
+use Slowlyo\OwlAdmin\Extend\ServiceProvider;
+use Slowlyo\OwlAdmin\Renderers\SwitchControl;
 
-class SlowDictServiceProvider extends ServiceProvider
+class OwlDictServiceProvider extends ServiceProvider
 {
     protected $menu = [
         [
