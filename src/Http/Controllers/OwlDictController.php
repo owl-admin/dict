@@ -12,6 +12,7 @@ use Slowlyo\OwlAdmin\Renderers\DialogAction;
 use Slowlyo\OwlAdmin\Renderers\SwitchControl;
 use Slowlyo\OwlAdmin\Renderers\NumberControl;
 use Slowlyo\OwlAdmin\Renderers\SelectControl;
+use Slowlyo\OwlAdmin\Renderers\VanillaAction;
 use Slowlyo\OwlDict\Services\AdminDictService;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
 
@@ -124,7 +125,7 @@ class OwlDictController extends AdminController
 
     public function form()
     {
-        return $this->baseForm()->data([
+        return $this->baseForm()->id('dict_item_form')->data([
             'enabled' => true,
             'sort'    => 0,
         ])->body([
@@ -137,7 +138,23 @@ class OwlDictController extends AdminController
                 ->valueField('id')
                 ->labelField('value'),
             TextControl::make()->name('value')->label($this->trans('field.value'))->required(true)->maxLength(255),
-            TextControl::make()->name('key')->label($this->trans('field.key'))->required(true)->maxLength(255),
+            TextControl::make()->name('key')->label($this->trans('field.key'))->required(true)->maxLength(255)->addOn(
+                VanillaAction::make()->label('随机')->icon('fa-solid fa-shuffle')->onEvent([
+                    'click' => [
+                        'actions' => [
+                            [
+                                'actionType' => 'setValue',
+                                'componentId' => 'dict_item_form',
+                                'args' => [
+                                    'value' => [
+                                        'key' => '${PADSTART(INT(RAND()*1000000000), 9, "0") | base64Encode | lowerCase}',
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ])
+            ),
             NumberControl::make()
                 ->name('sort')
                 ->label($this->trans('field.sort'))
