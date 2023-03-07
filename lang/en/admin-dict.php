@@ -8,6 +8,7 @@ return [
     'yes'              => 'Yes',
     'no'               => 'No',
     'sort_description' => 'The larger the sort value, the closer to the front',
+    'random'           => 'Random',
     'field'            => [
         'key'       => 'Key',
         'value'     => 'Value',

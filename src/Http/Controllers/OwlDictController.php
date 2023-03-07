@@ -139,7 +139,7 @@ class OwlDictController extends AdminController
                 ->labelField('value'),
             TextControl::make()->name('value')->label($this->trans('field.value'))->required(true)->maxLength(255),
             TextControl::make()->name('key')->label($this->trans('field.key'))->required(true)->maxLength(255)->addOn(
-                VanillaAction::make()->label('随机')->icon('fa-solid fa-shuffle')->onEvent([
+                VanillaAction::make()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
                     'click' => [
                         'actions' => [
                             [

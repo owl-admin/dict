@@ -8,6 +8,7 @@ return [
     'yes'              => '是',
     'no'               => '否',
     'sort_description' => '排序值越大越靠前',
+    'random'           => '随机',
     'field'            => [
         'key'       => '键值',
         'value'     => '值名称',
