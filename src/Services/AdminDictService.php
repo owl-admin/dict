@@ -63,15 +63,16 @@ class AdminDictService extends AdminService
     public function store($data): bool
     {
         $key = Arr::get($data, 'key');
+        $parentId = Arr::get($data, 'parent_id', 0);
 
-        $exists = $this->query()->where('key', $key)->exists();
+        $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->exists();
 
         if ($exists) {
             return $this->setError(
                 $this->trans(
                     'repeat',
                     [
-                        'field' => $this->trans('field.' . (Arr::get($data, 'parent_id') != 0 ? 'key' : 'type_key')),
+                        'field' => $this->trans('field.' . ($parentId != 0 ? 'key' : 'type_key')),
                     ]
                 )
             );
@@ -85,15 +86,16 @@ class AdminDictService extends AdminService
     public function update($primaryKey, $data): bool
     {
         $key = Arr::get($data, 'key');
+        $parentId = Arr::get($data, 'parent_id', 0);
 
-        $exists = $this->query()->where('key', $key)->where('id', '<>', $primaryKey)->exists();
+        $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->where('id', '<>', $primaryKey)->exists();
 
         if ($exists) {
             return $this->setError(
                 $this->trans(
                     'repeat',
                     [
-                        'field' => $this->trans('field.' . (Arr::get($data, 'parent_id') != 0 ? 'key' : 'type_key')),
+                        'field' => $this->trans('field.' . ($parentId != 0 ? 'key' : 'type_key')),
                     ]
                 )
             );
