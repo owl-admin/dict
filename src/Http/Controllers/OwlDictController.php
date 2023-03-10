@@ -143,16 +143,16 @@ class OwlDictController extends AdminController
                     'click' => [
                         'actions' => [
                             [
-                                'actionType' => 'setValue',
+                                'actionType'  => 'setValue',
                                 'componentId' => 'dict_item_form',
-                                'args' => [
+                                'args'        => [
                                     'value' => [
                                         'key' => '${PADSTART(INT(RAND()*1000000000), 9, "0") | base64Encode | lowerCase}',
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ])
             ),
             NumberControl::make()
@@ -211,11 +211,7 @@ class OwlDictController extends AdminController
                     ->bulkActions([$this->bulkDeleteButton()])
                     ->perPageAvailable([10, 20, 30, 50, 100, 200])
                     ->footerToolbar(['switch-per-page', 'statistics', 'pagination'])
-                    ->api([
-                        'url'    => $this->getListGetDataPath(),
-                        'method' => 'get',
-                        'data'   => ['_type' => 1],
-                    ])
+                    ->api($this->getListGetDataPath())
                     ->headerToolbar([
                         $createButton,
                         'bulkActions',
@@ -223,7 +219,7 @@ class OwlDictController extends AdminController
                         amis('filter-toggler')->align('right'),
                     ])
                     ->filter(
-                        $this->baseFilter()->body([
+                        $this->baseFilter()->data(['_type' => 1])->body([
                             TextControl::make()->name('type_key')->label($this->trans('field.type_key'))->size('md'),
                             TextControl::make()->name('type_value')->label($this->trans('field.value'))->size('md'),
                             SelectControl::make()
@@ -231,8 +227,8 @@ class OwlDictController extends AdminController
                                 ->label($this->trans('field.enabled'))
                                 ->size('md')
                                 ->options([
-                                    ['label' => $this->trans('yes'), 'value' => 1],
-                                    ['label' => $this->trans('no'), 'value' => 0],
+                                    '1' => $this->trans('yes'),
+                                    '0' => $this->trans('no'),
                                 ]),
                         ])
                     )

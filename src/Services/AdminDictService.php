@@ -45,14 +45,15 @@ class AdminDictService extends AdminService
         $typeValue   = request()->input('type_value');
         $typeEnabled = request()->input('type_enabled');
 
-        $query = $this->query()->where('parent_id', $isType, 0)
-            ->when($parentId, fn($query) => $query->where('value', 'like', "%{$parentId}%"))
+        $query = $this->query()
+            ->where('parent_id', $isType, 0)
+            ->when($parentId, fn($query) => $query->where('parent_id', $parentId))
             ->when($key, fn($query) => $query->where('key', 'like', "%{$key}%"))
             ->when($value, fn($query) => $query->where('value', 'like', "%{$value}%"))
-            ->when(is_numeric($enabled), fn($query) => $query->where('value', $enabled))
+            ->when(is_numeric($enabled), fn($query) => $query->where('enabled', $enabled))
             ->when($typeKey, fn($query) => $query->where('key', 'like', "%{$typeKey}%"))
             ->when($typeValue, fn($query) => $query->where('value', 'like', "%{$typeValue}%"))
-            ->when(is_numeric($typeEnabled), fn($query) => $query->where('value', $typeEnabled));
+            ->when(is_numeric($typeEnabled), fn($query) => $query->where('enabled', $typeEnabled));
 
         $items = (clone $query)->paginate(request()->input('perPage', 20))->items();
         $total = (clone $query)->count();
@@ -62,7 +63,7 @@ class AdminDictService extends AdminService
 
     public function store($data): bool
     {
-        $key = Arr::get($data, 'key');
+        $key      = Arr::get($data, 'key');
         $parentId = Arr::get($data, 'parent_id', 0);
 
         $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->exists();
@@ -85,10 +86,11 @@ class AdminDictService extends AdminService
 
     public function update($primaryKey, $data): bool
     {
-        $key = Arr::get($data, 'key');
+        $key      = Arr::get($data, 'key');
         $parentId = Arr::get($data, 'parent_id', 0);
 
-        $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->where('id', '<>', $primaryKey)->exists();
+        $exists =
+            $this->query()->where('parent_id', $parentId)->where('key', $key)->where('id', '<>', $primaryKey)->exists();
 
         if ($exists) {
             return $this->setError(
