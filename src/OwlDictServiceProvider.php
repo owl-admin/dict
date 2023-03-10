@@ -17,6 +17,8 @@ class OwlDictServiceProvider extends ServiceProvider
 
     public function register()
     {
+        parent::register();
+
         $this->app->singleton('admin.dict', AdminDict::class);
     }
 
