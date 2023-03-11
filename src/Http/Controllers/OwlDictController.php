@@ -95,13 +95,19 @@ class OwlDictController extends AdminController
                         ->source(admin_url('/admin_dict/dict_type_options'))
                         ->valueField('id')
                         ->size('md')
+                        ->clearable(true)
                         ->labelField('value'),
                     TextControl::make()->name('key')->label($this->trans('field.key'))->size('md'),
                     TextControl::make()->name('value')->label($this->trans('field.value'))->size('md'),
-                    SelectControl::make()->name('enabled')->label($this->trans('field.enabled'))->size('md')->options([
-                        ['label' => $this->trans('yes'), 'value' => 1],
-                        ['label' => $this->trans('no'), 'value' => 0],
-                    ]),
+                    SelectControl::make()
+                        ->name('enabled')
+                        ->label($this->trans('field.enabled'))
+                        ->size('md')
+                        ->clearable(true)
+                        ->options([
+                            ['label' => $this->trans('yes'), 'value' => 1],
+                            ['label' => $this->trans('no'), 'value' => 0],
+                        ]),
                 ])
             )
             ->columns([
@@ -211,7 +217,7 @@ class OwlDictController extends AdminController
                     ->bulkActions([$this->bulkDeleteButton()])
                     ->perPageAvailable([10, 20, 30, 50, 100, 200])
                     ->footerToolbar(['switch-per-page', 'statistics', 'pagination'])
-                    ->api($this->getListGetDataPath())
+                    ->api($this->getListGetDataPath() . '&_type=1')
                     ->headerToolbar([
                         $createButton,
                         'bulkActions',
@@ -226,6 +232,7 @@ class OwlDictController extends AdminController
                                 ->name('type_enabled')
                                 ->label($this->trans('field.enabled'))
                                 ->size('md')
+                                ->clearable(true)
                                 ->options([
                                     '1' => $this->trans('yes'),
                                     '0' => $this->trans('no'),
