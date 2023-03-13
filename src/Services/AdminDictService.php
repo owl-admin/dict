@@ -108,6 +108,13 @@ class AdminDictService extends AdminService
         return parent::update($primaryKey, $data);
     }
 
+    public function delete(string $ids): mixed
+    {
+        $this->clearCache();
+
+        return parent::delete($ids);
+    }
+
     private function handleData($data)
     {
         $result = [];
