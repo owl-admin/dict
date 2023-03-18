@@ -46,6 +46,7 @@ class AdminDictService extends AdminService
         $typeEnabled = request()->input('type_enabled');
 
         $query = $this->query()
+            ->with('dict_type')
             ->where('parent_id', $isType, 0)
             ->when($parentId, fn($query) => $query->where('parent_id', $parentId))
             ->when($key, fn($query) => $query->where('key', 'like', "%{$key}%"))

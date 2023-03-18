@@ -84,9 +84,6 @@ class OwlDictController extends AdminController
                 amis('reload')->align('right'),
                 amis('filter-toggler')->align('right'),
             ])
-            ->data([
-                'typeMap' => $this->service->getDictType()->pluck('value', 'id'),
-            ])
             ->filter(
                 $this->baseFilter()->body([
                     SelectControl::make()
@@ -112,7 +109,7 @@ class OwlDictController extends AdminController
             )
             ->columns([
                 TableColumn::make()
-                    ->name('${typeMap[parent_id]}')
+                    ->name('dict_type.value')
                     ->label($this->trans('type'))
                     ->type('tag')
                     ->set('color', 'active'),

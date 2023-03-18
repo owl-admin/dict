@@ -15,4 +15,9 @@ class AdminDict extends Model
     {
         return $this->hasMany(AdminDict::class, 'parent_id')->orderByDesc('sort');
     }
+
+    public function dict_type()
+    {
+        return $this->belongsTo(AdminDict::class, 'parent_id');
+    }
 }
