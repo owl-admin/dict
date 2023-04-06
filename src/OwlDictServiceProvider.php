@@ -11,7 +11,7 @@ class OwlDictServiceProvider extends ServiceProvider
         [
             'title' => '数据字典',
             'url'   => '/admin_dict',
-            'icon'  => 'fluent-mdl2:dictionary',
+            'icon'  => 'fa fa-book',
         ],
     ];
 

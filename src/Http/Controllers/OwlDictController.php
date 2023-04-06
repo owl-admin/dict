@@ -23,15 +23,6 @@ class OwlDictController extends AdminController
 {
     protected string $serviceName = AdminDictService::class;
 
-    protected string $queryPath = 'admin_dict';
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->pageTitle = $this->trans('page_title');
-    }
-
     /**
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      * @throws \Psr\Container\ContainerExceptionInterface
