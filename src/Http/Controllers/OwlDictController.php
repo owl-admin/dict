@@ -24,20 +24,6 @@ class OwlDictController extends AdminController
     protected string $serviceName = AdminDictService::class;
 
     /**
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function index()
-    {
-        if ($this->actionOfGetData()) {
-            return $this->response()->success($this->service->list());
-        }
-
-        return $this->response()->success($this->list());
-    }
-
-    /**
      * @return \Slowlyo\OwlAdmin\Renderers\Page
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
