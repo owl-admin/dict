@@ -59,11 +59,11 @@ class OwlDictController extends AdminController
                         ->searchable()
                         ->set('rootCreateTip', __('admin.create') . $this->trans('dict_type'))
                         ->selectFirst()
-                        ->creatable()
+                        ->creatable($this->dictTypeEnabled())
                         ->addControls($formItems)
-                        ->editable()
+                        ->editable($this->dictTypeEnabled())
                         ->editControls(array_merge($formItems, [amisMake()->HiddenControl()->name('id')]))
-                        ->removable()
+                        ->removable($this->dictTypeEnabled())
                         ->addApi($this->getStorePath())
                         ->editApi($this->getUpdatePath())
                         ->deleteApi($this->getDeletePath())
@@ -88,25 +88,16 @@ class OwlDictController extends AdminController
      */
     public function list()
     {
-        $createButton = $this->createButton(true);
-
-        if (OwlDictServiceProvider::setting('disabled_dict_create')) {
-            $createButton = '';
-        }
-
-        $rowAction = $this->rowActions([$this->rowEditButton(true), $this->rowDeleteButton()])->set('width', 240);
-
-        if (OwlDictServiceProvider::setting('disabled_dict_delete')) {
-            $rowAction = $this->rowActions([$this->rowEditButton(true)])->set('width', 120);
-        }
-
         $crud = $this->baseCRUD()
             ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId() . '}')
             ->headerToolbar([
-                $createButton,
+                $this->createButton(true)->visible(!OwlDictServiceProvider::setting('disabled_dict_create')),
                 'bulkActions',
                 amis('reload')->align('right'),
                 amis('filter-toggler')->align('right'),
+            ])
+            ->bulkActions([
+                $this->bulkDeleteButton()->visible(!OwlDictServiceProvider::setting('disabled_dict_delete')),
             ])
             ->filter(
                 $this->baseFilter()->body([
@@ -129,7 +120,10 @@ class OwlDictController extends AdminController
                 ),
                 amisMake()->TableColumn('sort', $this->trans('field.sort'))->width(120),
                 amisMake()->TableColumn('created_at', __('admin.created_at'))->width(120),
-                $rowAction,
+                $this->rowActions([
+                    $this->rowEditButton(true),
+                    $this->rowDeleteButton()->visible(!OwlDictServiceProvider::setting('disabled_dict_delete')),
+                ])->set('width', 240),
             ]);
 
         return $this->baseList($crud);
@@ -188,5 +182,10 @@ class OwlDictController extends AdminController
     private function trans($key)
     {
         return OwlDictServiceProvider::trans('admin-dict.' . $key);
+    }
+
+    private function dictTypeEnabled()
+    {
+        return !OwlDictServiceProvider::setting('disabled_dict_type');
     }
 }
