@@ -6,8 +6,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Slowlyo\OwlDict\OwlDictServiceProvider;
-use Slowlyo\OwlDict\Models\AdminDict as Model;
 use Slowlyo\OwlAdmin\Services\AdminService;
+use Slowlyo\OwlDict\Models\AdminDict as Model;
 
 /**
  * @method Model|Builder query()
@@ -24,6 +24,11 @@ class AdminDictService extends AdminService
         return $this->query()->where('parent_id', $parentId)->get();
     }
 
+    public function getFirstId()
+    {
+        return $this->query()->where('parent_id', 0)->value('id');
+    }
+
     public function getDictType()
     {
         return $this->getListByParentId(0);
@@ -31,35 +36,34 @@ class AdminDictService extends AdminService
 
     public function getDictTypeOptions()
     {
-        return $this->getDictType()->map(fn($item) => $item->only(['id', 'value']))->toArray();
+        return $this->getDictType()
+            ->map(fn($item) => $item->only(['id', 'value', 'key', 'enabled']))
+            ->map(function ($item) {
+                $item['creatable'] = false;
+                return $item;
+            })
+            ->toArray();
     }
 
-    public function list()
+    public function listQuery()
     {
-        $isType      = request()->has('_type') ? '=' : '<>';
-        $key         = request()->input('key');
-        $value       = request()->input('value');
-        $parentId    = request()->input('parent_id');
-        $enabled     = request()->input('enabled');
-        $typeKey     = request()->input('type_key');
-        $typeValue   = request()->input('type_value');
-        $typeEnabled = request()->input('type_enabled');
+        $key      = request()->input('key');
+        $value    = request()->input('value');
+        $parentId = request()->input('parent_id');
+        $enabled  = request()->input('enabled');
 
         $query = $this->query()
+            ->orderByDesc($this->sortColumn())
             ->with('dict_type')
-            ->where('parent_id', $isType, 0)
+            ->where('parent_id', '<>', 0)
             ->when($parentId, fn($query) => $query->where('parent_id', $parentId))
             ->when($key, fn($query) => $query->where('key', 'like', "%{$key}%"))
             ->when($value, fn($query) => $query->where('value', 'like', "%{$value}%"))
-            ->when(is_numeric($enabled), fn($query) => $query->where('enabled', $enabled))
-            ->when($typeKey, fn($query) => $query->where('key', 'like', "%{$typeKey}%"))
-            ->when($typeValue, fn($query) => $query->where('value', 'like', "%{$typeValue}%"))
-            ->when(is_numeric($typeEnabled), fn($query) => $query->where('enabled', $typeEnabled));
+            ->when(is_numeric($enabled), fn($query) => $query->where('enabled', $enabled));
 
-        $items = (clone $query)->paginate(request()->input('perPage', 20))->items();
-        $total = (clone $query)->count();
+        $this->sortable($query);
 
-        return compact('items', 'total');
+        return $query;
     }
 
     public function store($data): bool
@@ -70,14 +74,7 @@ class AdminDictService extends AdminService
         $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->exists();
 
         if ($exists) {
-            return $this->setError(
-                $this->trans(
-                    'repeat',
-                    [
-                        'field' => $this->trans('field.' . ($parentId != 0 ? 'key' : 'type_key')),
-                    ]
-                )
-            );
+            return $this->repeatError($parentId);
         }
 
         $this->clearCache();
@@ -94,19 +91,24 @@ class AdminDictService extends AdminService
             $this->query()->where('parent_id', $parentId)->where('key', $key)->where('id', '<>', $primaryKey)->exists();
 
         if ($exists) {
-            return $this->setError(
-                $this->trans(
-                    'repeat',
-                    [
-                        'field' => $this->trans('field.' . ($parentId != 0 ? 'key' : 'type_key')),
-                    ]
-                )
-            );
+            return $this->repeatError($parentId);
         }
 
         $this->clearCache();
 
         return parent::update($primaryKey, $data);
+    }
+
+    public function repeatError($parentId)
+    {
+        return $this->setError(
+            $this->trans(
+                'repeat',
+                [
+                    'field' => $this->trans('field.' . ($parentId != 0 ? 'key' : 'type_key')),
+                ]
+            )
+        );
     }
 
     public function delete(string $ids): mixed

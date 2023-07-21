@@ -2,17 +2,7 @@
 
 namespace Slowlyo\OwlDict\Http\Controllers;
 
-use Slowlyo\OwlAdmin\Renderers\Dialog;
-use Slowlyo\OwlAdmin\Renderers\CRUDTable;
-use Slowlyo\OwlAdmin\Renderers\Operation;
-use Slowlyo\OwlAdmin\Renderers\TableColumn;
-use Slowlyo\OwlAdmin\Renderers\TextControl;
 use Slowlyo\OwlDict\OwlDictServiceProvider;
-use Slowlyo\OwlAdmin\Renderers\DialogAction;
-use Slowlyo\OwlAdmin\Renderers\SwitchControl;
-use Slowlyo\OwlAdmin\Renderers\NumberControl;
-use Slowlyo\OwlAdmin\Renderers\SelectControl;
-use Slowlyo\OwlAdmin\Renderers\VanillaAction;
 use Slowlyo\OwlDict\Services\AdminDictService;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
 
@@ -22,6 +12,74 @@ use Slowlyo\OwlAdmin\Controllers\AdminController;
 class OwlDictController extends AdminController
 {
     protected string $serviceName = AdminDictService::class;
+
+    public function index()
+    {
+        if ($this->actionOfGetData()) {
+            return $this->response()->success($this->service->list());
+        }
+
+        $page = amisMake()->Page()->body([
+            amisMake()->Flex()->items([$this->navBar(), $this->list()]),
+        ])->css([
+            '.cxd-Tree-itemArrowPlaceholder' => ['display' => 'none'],
+            '.cxd-Tree-itemLabel'            => ['padding-left' => '0 !important'],
+        ]);
+
+        return $this->response()->success($page);
+    }
+
+    public function navBar()
+    {
+        $formItems = [
+            amisMake()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
+            amisMake()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255),
+            amisMake()->SwitchControl('enabled', 1)->label($this->trans('field.enabled')),
+        ];
+
+        return amisMake()->Card()->className('w-1/4 mr-5 mb-0')->body([
+            amisMake()->Flex()->className('mb-4')->justify('space-between')->items([
+                amisMake()
+                    ->Wrapper()
+                    ->size('none')
+                    ->body($this->trans('dict_type'))
+                    ->className('flex items-center text-md'),
+            ]),
+            amisMake()
+                ->Form()
+                ->wrapWithPanel(false)
+                ->body(
+                    amisMake()
+                        ->TreeControl('dict_type')
+                        ->id('dict_type_list')
+                        ->source('/admin_dict/dict_type_options')
+                        ->set('valueField', 'id')
+                        ->set('labelField', 'value')
+                        ->showIcon(false)
+                        ->searchable()
+                        ->set('rootCreateTip', __('admin.create') . $this->trans('dict_type'))
+                        ->selectFirst()
+                        ->creatable()
+                        ->addControls($formItems)
+                        ->editable()
+                        ->editControls(array_merge($formItems, [amisMake()->HiddenControl()->name('id')]))
+                        ->removable()
+                        ->addApi($this->getStorePath())
+                        ->editApi($this->getUpdatePath())
+                        ->deleteApi($this->getDeletePath())
+                        ->onEvent([
+                            'change' => [
+                                'actions' => [
+                                    [
+                                        'actionType' => 'url',
+                                        'args'       => ['url' => '/admin_dict?dict_type=${dict_type}'],
+                                    ],
+                                ],
+                            ],
+                        ])
+                ),
+        ]);
+    }
 
     /**
      * @return \Slowlyo\OwlAdmin\Renderers\Page
@@ -36,48 +94,27 @@ class OwlDictController extends AdminController
             $createButton = '';
         }
 
-        $rowAction = Operation::make()->label(__('admin.actions'))->buttons([
-            $this->rowEditButton(true),
-            $this->rowDeleteButton(),
-        ])->set('width', 240);
+        $rowAction = $this->rowActions([$this->rowEditButton(true), $this->rowDeleteButton()])->set('width', 240);
 
         if (OwlDictServiceProvider::setting('disabled_dict_delete')) {
-            $rowAction = Operation::make()->label(__('admin.actions'))->buttons([
-                $this->rowEditButton(true),
-            ])->set('width', 120);
-        }
-
-        $dictTypeButton = $this->dictForm();
-
-        if (OwlDictServiceProvider::setting('disabled_dict_type')) {
-            $dictTypeButton = '';
+            $rowAction = $this->rowActions([$this->rowEditButton(true)])->set('width', 120);
         }
 
         $crud = $this->baseCRUD()
+            ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId() . '}')
             ->headerToolbar([
                 $createButton,
                 'bulkActions',
-                $dictTypeButton,
                 amis('reload')->align('right'),
                 amis('filter-toggler')->align('right'),
             ])
             ->filter(
                 $this->baseFilter()->body([
-                    SelectControl::make()
-                        ->name('parent_id')
-                        ->label($this->trans('type'))
-                        ->source(admin_url('/admin_dict/dict_type_options'))
-                        ->valueField('id')
+                    amisMake()->TextControl('key', $this->trans('field.key'))->size('md'),
+                    amisMake()->TextControl('value', $this->trans('field.value'))->size('md'),
+                    amisMake()->SelectControl('enabled', $this->trans('field.enabled'))
                         ->size('md')
-                        ->clearable(true)
-                        ->labelField('value'),
-                    TextControl::make()->name('key')->label($this->trans('field.key'))->size('md'),
-                    TextControl::make()->name('value')->label($this->trans('field.value'))->size('md'),
-                    SelectControl::make()
-                        ->name('enabled')
-                        ->label($this->trans('field.enabled'))
-                        ->size('md')
-                        ->clearable(true)
+                        ->clearable()
                         ->options([
                             ['label' => $this->trans('yes'), 'value' => 1],
                             ['label' => $this->trans('no'), 'value' => 0],
@@ -85,23 +122,18 @@ class OwlDictController extends AdminController
                 ])
             )
             ->columns([
-                TableColumn::make()
-                    ->name('dict_type.value')
-                    ->label($this->trans('type'))
-                    ->type('tag')
-                    ->set('color', 'active'),
-                TableColumn::make()->name('key')->label($this->trans('field.key')),
-                TableColumn::make()->name('value')->label($this->trans('field.value')),
-                TableColumn::make()->name('enabled')->label($this->trans('field.enabled'))->type('status')->width(120),
-                TableColumn::make()->name('sort')->label($this->trans('field.sort'))->width(120),
-                TableColumn::make()->name('created_at')->label(__('admin.created_at'))->width(120),
-                TableColumn::make()->name('updated_at')->label(__('admin.updated_at'))->width(120),
+                amisMake()->TableColumn('value', $this->trans('field.value')),
+                amisMake()->TableColumn('key', $this->trans('field.key')),
+                amisMake()->TableColumn('enabled', $this->trans('field.enabled'))->quickEdit(
+                    amisMake()->SwitchControl()->mode('inline')->saveImmediately(true)
+                ),
+                amisMake()->TableColumn('sort', $this->trans('field.sort'))->width(120),
+                amisMake()->TableColumn('created_at', __('admin.created_at'))->width(120),
                 $rowAction,
             ]);
 
         return $this->baseList($crud);
     }
-
 
     public function form()
     {
@@ -109,17 +141,16 @@ class OwlDictController extends AdminController
             'enabled' => true,
             'sort'    => 0,
         ])->body([
-            SelectControl::make()
-                ->name('parent_id')
-                ->label($this->trans('type'))
+            amisMake()->SelectControl('parent_id', $this->trans('type'))
                 ->source(admin_url('/admin_dict/dict_type_options'))
-                ->clearable(true)
-                ->required(true)
+                ->clearable()
+                ->required()
+                ->value('${dict_type || ' . $this->service->getFirstId() . '}')
                 ->valueField('id')
                 ->labelField('value'),
-            TextControl::make()->name('value')->label($this->trans('field.value'))->required(true)->maxLength(255),
-            TextControl::make()->name('key')->label($this->trans('field.key'))->required(true)->maxLength(255)->addOn(
-                VanillaAction::make()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
+            amisMake()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
+            amisMake()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255)->addOn(
+                amisMake()->VanillaAction()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
                     'click' => [
                         'actions' => [
                             [
@@ -135,14 +166,12 @@ class OwlDictController extends AdminController
                     ],
                 ])
             ),
-            NumberControl::make()
-                ->name('sort')
-                ->label($this->trans('field.sort'))
+            amisMake()->NumberControl('sort', $this->trans('field.sort'))
                 ->displayMode('enhance')
                 ->min(0)
                 ->max(9999)
                 ->description($this->trans('sort_description')),
-            SwitchControl::make()->name('enabled')->label($this->trans('field.enabled')),
+            amisMake()->SwitchControl('enabled', $this->trans('field.enabled')),
         ]);
     }
 
@@ -154,82 +183,6 @@ class OwlDictController extends AdminController
     public function detail($id)
     {
         return $this->baseDetail($id);
-    }
-
-    public function dictForm()
-    {
-        $form = $this->baseForm()->api($this->getStorePath())->data([
-            'enabled' => true,
-            'sort'    => 0,
-        ])->body([
-            TextControl::make()->name('value')->label($this->trans('field.value'))->required(true)->maxLength(255),
-            TextControl::make()->name('key')->label($this->trans('field.key'))->required(true)->maxLength(255),
-            SwitchControl::make()->name('enabled')->label($this->trans('field.enabled')),
-        ]);
-
-        $createButton = DialogAction::make()
-            ->dialog(Dialog::make()->title(__('admin.create'))->body($form))
-            ->label(__('admin.create'))
-            ->icon('fa fa-add')
-            ->level('primary');
-
-        $editForm = (clone $form)->api($this->getUpdatePath('$id'))->initApi($this->getEditGetDataPath('$id'));
-
-        $editButton = DialogAction::make()
-            ->dialog(Dialog::make()->title(__('admin.edit'))->body($editForm))
-            ->label(__('admin.edit'))
-            ->icon('fa-regular fa-pen-to-square')
-            ->level('link');
-
-        return DialogAction::make()->label($this->trans('dict_type'))->dialog(
-            Dialog::make()->title($this->trans('dict_type'))->size('lg')->actions([])->body(
-                CRUDTable::make()
-                    ->perPage(20)
-                    ->affixHeader(false)
-                    ->filterTogglable(true)
-                    ->filterDefaultVisible(false)
-                    ->bulkActions([$this->bulkDeleteButton()])
-                    ->perPageAvailable([10, 20, 30, 50, 100, 200])
-                    ->footerToolbar(['switch-per-page', 'statistics', 'pagination'])
-                    ->api($this->getListGetDataPath() . '&_type=1')
-                    ->headerToolbar([
-                        $createButton,
-                        'bulkActions',
-                        amis('reload')->align('right'),
-                        amis('filter-toggler')->align('right'),
-                    ])
-                    ->filter(
-                        $this->baseFilter()->data(['_type' => 1])->body([
-                            TextControl::make()->name('type_key')->label($this->trans('field.type_key'))->size('md'),
-                            TextControl::make()->name('type_value')->label($this->trans('field.value'))->size('md'),
-                            SelectControl::make()
-                                ->name('type_enabled')
-                                ->label($this->trans('field.enabled'))
-                                ->size('md')
-                                ->clearable(true)
-                                ->options([
-                                    '1' => $this->trans('yes'),
-                                    '0' => $this->trans('no'),
-                                ]),
-                        ])
-                    )
-                    ->columns([
-                        TableColumn::make()->name('value')->label($this->trans('field.value')),
-                        TableColumn::make()->name('key')->label($this->trans('field.type_key')),
-                        TableColumn::make()
-                            ->name('enabled')
-                            ->label($this->trans('field.enabled'))
-                            ->type('status')
-                            ->width(120),
-                        TableColumn::make()->name('created_at')->label(__('admin.created_at'))->width(120),
-                        TableColumn::make()->name('updated_at')->label(__('admin.updated_at'))->width(120),
-                        Operation::make()->label(__('admin.actions'))->buttons([
-                            $editButton,
-                            $this->rowDeleteButton(),
-                        ])->set('width', 240),
-                    ])
-            )
-        );
     }
 
     private function trans($key)
