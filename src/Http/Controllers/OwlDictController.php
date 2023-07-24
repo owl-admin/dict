@@ -67,6 +67,7 @@ class OwlDictController extends AdminController
                         ->addApi($this->getStorePath())
                         ->editApi($this->getUpdatePath())
                         ->deleteApi($this->getDeletePath())
+                        ->menuTpl('<span class="${!enabled ? "text-gray-300" : ""} w-1/5">${value}</div>')
                         ->onEvent([
                             'change' => [
                                 'actions' => [
