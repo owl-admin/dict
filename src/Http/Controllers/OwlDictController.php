@@ -90,6 +90,7 @@ class OwlDictController extends AdminController
     public function list()
     {
         $crud = $this->baseCRUD()
+            ->syncLocation(false)
             ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId() . '}&page=${page}&perPage=${perPage}')
             ->headerToolbar([
                 $this->createButton(true)->visible(!OwlDictServiceProvider::setting('disabled_dict_create')),
