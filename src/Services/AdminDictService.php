@@ -146,7 +146,7 @@ class AdminDictService extends AdminService
         return Cache::rememberForever(self::All_DICT_CACHE_KEY, function () {
             return Cache::lock(self::All_DICT_CACHE_KEY . '_lock', 10)->block(5, function () {
                 $data = $this->query()
-                    ->with('children')
+                    ->with(['children' => fn($q) => $q->withTrashed()])
                     ->withTrashed()
                     ->where('parent_id', 0)
                     ->orderByDesc('sort')
