@@ -19,8 +19,8 @@ class OwlDictController extends AdminController
             return $this->response()->success($this->service->list());
         }
 
-        $page = amisMake()->Page()->body([
-            amisMake()->Flex()->items([$this->navBar(), $this->list()]),
+        $page = amis()->Page()->body([
+            amis()->Flex()->items([$this->navBar(), $this->list()]),
         ])->css([
             '.cxd-Tree-itemArrowPlaceholder' => ['display' => 'none'],
             '.cxd-Tree-itemLabel'            => ['padding-left' => '0 !important'],
@@ -32,24 +32,24 @@ class OwlDictController extends AdminController
     public function navBar()
     {
         $formItems = [
-            amisMake()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
-            amisMake()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255),
-            amisMake()->SwitchControl('enabled', 1)->label($this->trans('field.enabled')),
+            amis()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
+            amis()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255),
+            amis()->SwitchControl('enabled', 1)->label($this->trans('field.enabled')),
         ];
 
-        return amisMake()->Card()->className('w-1/4 mr-5 mb-0')->body([
-            amisMake()->Flex()->className('mb-4')->justify('space-between')->items([
-                amisMake()
+        return amis()->Card()->className('w-1/4 mr-5 mb-0')->body([
+            amis()->Flex()->className('mb-4')->justify('space-between')->items([
+                amis()
                     ->Wrapper()
                     ->size('none')
                     ->body($this->trans('dict_type'))
                     ->className('flex items-center text-md'),
             ]),
-            amisMake()
+            amis()
                 ->Form()
                 ->wrapWithPanel(false)
                 ->body(
-                    amisMake()
+                    amis()
                         ->TreeControl('dict_type')
                         ->id('dict_type_list')
                         ->source('/admin_dict/dict_type_options')
@@ -62,7 +62,7 @@ class OwlDictController extends AdminController
                         ->creatable($this->dictTypeEnabled())
                         ->addControls($formItems)
                         ->editable($this->dictTypeEnabled())
-                        ->editControls(array_merge($formItems, [amisMake()->HiddenControl()->name('id')]))
+                        ->editControls(array_merge($formItems, [amis()->HiddenControl()->name('id')]))
                         ->removable($this->dictTypeEnabled())
                         ->addApi($this->getStorePath())
                         ->editApi($this->getUpdatePath())
@@ -104,9 +104,9 @@ class OwlDictController extends AdminController
             ])
             ->filter(
                 $this->baseFilter()->body([
-                    amisMake()->TextControl('key', $this->trans('field.key'))->size('md'),
-                    amisMake()->TextControl('value', $this->trans('field.value'))->size('md'),
-                    amisMake()->SelectControl('enabled', $this->trans('field.enabled'))
+                    amis()->TextControl('key', $this->trans('field.key'))->size('md'),
+                    amis()->TextControl('value', $this->trans('field.value'))->size('md'),
+                    amis()->SelectControl('enabled', $this->trans('field.enabled'))
                         ->size('md')
                         ->clearable()
                         ->options([
@@ -116,13 +116,13 @@ class OwlDictController extends AdminController
                 ])
             )
             ->columns([
-                amisMake()->TableColumn('value', $this->trans('field.value')),
-                amisMake()->TableColumn('key', $this->trans('field.key')),
-                amisMake()->TableColumn('enabled', $this->trans('field.enabled'))->quickEdit(
-                    amisMake()->SwitchControl()->mode('inline')->saveImmediately(true)
+                amis()->TableColumn('value', $this->trans('field.value')),
+                amis()->TableColumn('key', $this->trans('field.key')),
+                amis()->TableColumn('enabled', $this->trans('field.enabled'))->quickEdit(
+                    amis()->SwitchControl()->mode('inline')->saveImmediately(true)
                 ),
-                amisMake()->TableColumn('sort', $this->trans('field.sort'))->width(120),
-                amisMake()->TableColumn('created_at', __('admin.created_at'))->width(120),
+                amis()->TableColumn('sort', $this->trans('field.sort'))->width(120),
+                amis()->TableColumn('created_at', __('admin.created_at'))->width(120),
                 $this->rowActions([
                     $this->rowEditButton(true),
                     $this->rowDeleteButton()->visible(!OwlDictServiceProvider::setting('disabled_dict_delete')),
@@ -138,16 +138,16 @@ class OwlDictController extends AdminController
             'enabled' => true,
             'sort'    => 0,
         ])->body([
-            amisMake()->SelectControl('parent_id', $this->trans('type'))
+            amis()->SelectControl('parent_id', $this->trans('type'))
                 ->source(admin_url('/admin_dict/dict_type_options'))
                 ->clearable()
                 ->required()
                 ->value('${dict_type || ' . $this->service->getFirstId() . '}')
                 ->valueField('id')
                 ->labelField('value'),
-            amisMake()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
-            amisMake()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255)->addOn(
-                amisMake()->VanillaAction()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
+            amis()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
+            amis()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255)->addOn(
+                amis()->VanillaAction()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
                     'click' => [
                         'actions' => [
                             [
@@ -163,12 +163,12 @@ class OwlDictController extends AdminController
                     ],
                 ])
             ),
-            amisMake()->NumberControl('sort', $this->trans('field.sort'))
+            amis()->NumberControl('sort', $this->trans('field.sort'))
                 ->displayMode('enhance')
                 ->min(0)
                 ->max(9999)
                 ->description($this->trans('sort_description')),
-            amisMake()->SwitchControl('enabled', $this->trans('field.enabled')),
+            amis()->SwitchControl('enabled', $this->trans('field.enabled')),
         ]);
     }
 
