@@ -68,6 +68,14 @@ public function getKey($path, $default = '', $needAllData = true)
  */
 public function getAll($path, $default = [], $needAllData = true)
 
+
+/**
+ * 获取数据字典数据 - 选项格式
+ * @params ...
+ * @return array 例如: [['label' => '正常', 'value' => 'normal']]
+ */
+public function getOptions($path, $needAllData = true)
+
 ```
 
 ### 注意事项

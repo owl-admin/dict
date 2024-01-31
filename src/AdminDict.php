@@ -19,6 +19,14 @@ class AdminDict
         return Arr::get($this->data, 'value', $default);
     }
 
+    public function options()
+    {
+        return collect($this->data)->values()->map(fn($item) => [
+            'label' => $item['value'],
+            'value' => $item['key'],
+        ])->toArray();
+    }
+
     public function all($default = [])
     {
         return $this->data ?: $default;
@@ -46,5 +54,10 @@ class AdminDict
     public function getAll($path, $default = [], $needAllData = true)
     {
         return $this->get($path, $needAllData)->all($default);
+    }
+
+    public function getOptions($path, $needAllData = true)
+    {
+        return $this->get($path, $needAllData)->options();
     }
 }
