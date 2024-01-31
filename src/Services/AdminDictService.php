@@ -26,7 +26,7 @@ class AdminDictService extends AdminService
 
     public function getFirstId()
     {
-        return $this->query()->where('parent_id', 0)->value('id');
+        return $this->query()->where('parent_id', 0)->value('id') ?? 0;
     }
 
     public function getDictType()

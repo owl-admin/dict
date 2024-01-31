@@ -19,12 +19,14 @@ class OwlDictController extends AdminController
             return $this->response()->success($this->service->list());
         }
 
-        $page = amis()->Page()->body([
-            amis()->Flex()->items([$this->navBar(), $this->list()]),
-        ])->css([
+        $css = [
             '.cxd-Tree-itemArrowPlaceholder' => ['display' => 'none'],
             '.cxd-Tree-itemLabel'            => ['padding-left' => '0 !important'],
-        ]);
+        ];
+
+        $page = amis()->Page()->body([
+            amis()->Flex()->items([$this->navBar(), $this->list()]),
+        ])->css($css);
 
         return $this->response()->success($page);
     }
@@ -34,23 +36,20 @@ class OwlDictController extends AdminController
         $formItems = [
             amis()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
             amis()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255),
-            amis()->SwitchControl('enabled', 1)->label($this->trans('field.enabled')),
+            amis()->SwitchControl('enabled', $this->trans('field.enabled'))->value(1),
         ];
 
-        return amis()->Card()->className('w-1/4 mr-5 mb-0')->body([
+        return amis()->Card()->className('w-1/4 mr-5 mb-0 min-w-xs')->body([
             amis()->Flex()->className('mb-4')->justify('space-between')->items([
-                amis()
-                    ->Wrapper()
+                amis()->Wrapper()
                     ->size('none')
                     ->body($this->trans('dict_type'))
                     ->className('flex items-center text-md'),
             ]),
-            amis()
-                ->Form()
+            amis()->Form()
                 ->wrapWithPanel(false)
                 ->body(
-                    amis()
-                        ->TreeControl('dict_type')
+                    amis()->TreeControl('dict_type')
                         ->id('dict_type_list')
                         ->source('/admin_dict/dict_type_options')
                         ->set('valueField', 'id')
@@ -91,8 +90,7 @@ class OwlDictController extends AdminController
     {
         $crud = $this->baseCRUD()
             ->syncLocation(false)
-            ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId()
-                  . '}&page=${page}&perPage=${perPage}&enabled=${enabled}&key=${key}&value=${value}')
+            ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId() . '}&page=${page}&perPage=${perPage}&enabled=${enabled}&key=${key}&value=${value}')
             ->headerToolbar([
                 $this->createButton(true)->visible(!OwlDictServiceProvider::setting('disabled_dict_create')),
                 'bulkActions',
