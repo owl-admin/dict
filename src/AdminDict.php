@@ -27,6 +27,11 @@ class AdminDict
         ])->toArray();
     }
 
+    public function mapValues()
+    {
+        return (object)collect($this->data)->values()->pluck('value', 'key')->toArray();
+    }
+
     public function all($default = [])
     {
         return $this->data ?: $default;
@@ -35,9 +40,7 @@ class AdminDict
     public function get($path, $needAllData = false)
     {
         $originData = $needAllData ? Service::make()->getAllData() : Service::make()->getValidData();
-
         $this->data = Arr::get($originData, $path);
-
         return $this;
     }
 
@@ -54,6 +57,17 @@ class AdminDict
     public function getAll($path, $default = [], $needAllData = true)
     {
         return $this->get($path, $needAllData)->all($default);
+    }
+
+    /**
+     * 获取value=>label 结构的映射数据
+     * @param $path
+     * @param $needAllData
+     * @return mixed[]
+     */
+    public function getMapValues($path, $needAllData = true)
+    {
+        return $this->get($path, $needAllData)->mapValues($default);
     }
 
     public function getOptions($path, $needAllData = true)
