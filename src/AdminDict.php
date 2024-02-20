@@ -67,7 +67,7 @@ class AdminDict
      */
     public function getMapValues($path, $needAllData = true)
     {
-        return $this->get($path, $needAllData)->mapValues($default);
+        return $this->get($path, $needAllData)->mapValues();
     }
 
     public function getOptions($path, $needAllData = true)
