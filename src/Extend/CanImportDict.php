@@ -52,11 +52,13 @@ trait CanImportDict
             return;
         }
 
-        AdminDict::create([
+        AdminDict::query()->insert([
             'parent_id' => $this->getParentDictId($dict['parent'] ?? 0),
             'key'     => $dict['key'],
             'value'     => $dict['value'],
             'extension' => $this->getName(),
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s'),
         ]);
     }
 
