@@ -12,7 +12,6 @@ use Slowlyo\OwlDict\Models\AdminDict;
  */
 trait CanImportDict
 {
-    protected $dict = [];
 
     protected array $dictValidationRules = [
         'parent'   => 'nullable',
