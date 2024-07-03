@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->tinyInteger('enabled')->default(1)->comment('是否启用')->index();
             $table->integer('sort')->default(0)->comment('排序')->index();
             $table->text('value')->comment('名称');
+
             $table->timestamps();
             $table->softDeletes();
         });
