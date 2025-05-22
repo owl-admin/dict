@@ -12,8 +12,8 @@ return [
     'sort_description' => '排序值越大越靠前',
     'random'           => '随机',
     'field'            => [
-        'key'       => '键值',
-        'value'     => '值名称',
+        'key'       => '键',
+        'value'     => '值',
         'parent_id' => '分类',
         'enabled'   => '是否启用',
         'sort'      => '排序',
