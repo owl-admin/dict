@@ -90,6 +90,11 @@ class OwlDictController extends AdminController
     {
         $crud = $this->baseCRUD()
             ->syncLocation(false)
+            ->draggable()
+            ->saveOrderApi([
+                'url'  => '/admin_dict/save_order',
+                'data' => ['ids' => '${ids}'],
+            ])
             ->api($this->getListGetDataPath() . '&parent_id=${dict_type || ' . $this->service->getFirstId() . '}&page=${page}&perPage=${perPage}&enabled=${enabled}&key=${key}&value=${value}')
             ->headerToolbar([
                 $this->createButton(true)->visible(!OwlDictServiceProvider::setting('disabled_dict_create')),
@@ -191,7 +196,12 @@ class OwlDictController extends AdminController
 
     public function detail($id)
     {
-        return $this->baseDetail($id);
+        return $this->baseDetail();
+    }
+
+    public function saveOrder()
+    {
+        return $this->autoResponse($this->service->reorder(request()->input('ids')));
     }
 
     private function trans($key)
